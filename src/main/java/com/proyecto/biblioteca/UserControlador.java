@@ -21,60 +21,59 @@ import com.gestion.usuario.excepciones.ResourceNotFoundException;
 @RestController
 @RequestMapping("/api/v1")
 @CrossOrigin(origins = "http://localhost:4200")
-public class UsuarioControlador {
+public class UserControlador {
 	
 	@Autowired 
-	private UsuarioRepositorio repository;
+	private UserRepositorio repository;
 
 	//Return all users in a list		
-	@GetMapping("/usuario")
-	public List<Usuario> listarTodosLosUsuarios() {
+	@GetMapping("/usuarios")
+	public List<User> listarTodosLosUsuarios() {
 		return repository.findAll();
 	}
 		
 	//Save the user
-	@PostMapping("/usuario")
-	public Usuario guardarUsuario(@RequestBody Usuario usuario) {
-		return repository.save(usuario);
+	@PostMapping("/usuarios")
+	public User saveUser(@RequestBody User user) {
+		return repository.save(user);
 	}
 	
 	//Search an user
-	@GetMapping("/usuario/{id}")
-	public ResponseEntity<Usuario> obtenerUsuarioPorId(@PathVariable Long id){
-			Usuario usuario = repository.findById(id)
+	@GetMapping("/usuarios/{id}")
+	public ResponseEntity<User> getUserbyId(@PathVariable Long id){
+		User user = repository.findById(id)
 						        .orElseThrow(() -> new ResourceNotFoundException("No existe el usuario con el ID : " + id));
-			return ResponseEntity.ok(usuario);
+			return ResponseEntity.ok(user);
 	}
 		
 	    
   //Edit an specific User by id	
-    @PutMapping("/usuario/{id}") 
-    public ResponseEntity<Usuario> actualizarUsuario(@PathVariable Long id, @RequestBody Usuario detallesUsuario){
-		Usuario usuario = repository.findById(id)
+    @PutMapping("/usuarios/{id}") 
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails){
+		User user = repository.findById(id)
 						  .orElseThrow(()-> new ResourceNotFoundException("No existe el usuario con el id: " + id));
 		
-		usuario.setName(detallesUsuario.getName());
-		usuario.setLast_name_p(detallesUsuario.getLast_name_p());
-		usuario.setLast_name_m(detallesUsuario.getLast_name_m());
-		usuario.setDomicilio(detallesUsuario.getDomicilio());
-		usuario.setTel(detallesUsuario.getTel());
-		usuario.setSanctions(detallesUsuario.getSanctions());
-		usuario.setSanc_money(detallesUsuario.getSanc_money());
+		user.setCity_id(userDetails.getCity_id());
+		user.setCountry_id(userDetails.getCountry_id());
+		user.setEmail(userDetails.getEmail());
+		user.setProvince_id(userDetails.getProvince_id());
+		user.setDeleted(userDetails.getDeleted());
 		
-		Usuario usuarioActualizado = repository.save(usuario);
 		
-		return ResponseEntity.ok(usuarioActualizado);		
+		User userUpdated = repository.save(user);
+		
+		return ResponseEntity.ok(userUpdated);		
     }
     
     	  
     //Delete a User
   
-  	@DeleteMapping("/usuario/{id}")
-  	public ResponseEntity<Map<String,Boolean>> eliminarUsuario(@PathVariable Long id){
-  		Usuario usuario = repository.findById(id)
+  	@DeleteMapping("/usuarios/{id}")
+  	public ResponseEntity<Map<String,Boolean>> deleteUser(@PathVariable Long id){
+  		User user = repository.findById(id)
   				            .orElseThrow(() -> new ResourceNotFoundException("No existe el usuario con el ID : " + id));
   		
-  		repository.delete(usuario);
+  		repository.delete(user);
   		Map<String, Boolean> respuesta = new HashMap<>();
   		respuesta.put("eliminar",Boolean.TRUE);
   		return ResponseEntity.ok(respuesta);
